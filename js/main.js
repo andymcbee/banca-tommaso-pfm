@@ -78,12 +78,17 @@ const fetchTransactionsByCardId = async (cardId) => {
 
 
 
-const generateTransactionsTable = (data) => {
+const generateTransactionsTable = (data, loading) => {
+
+    console.log(data)
+    console.log(`Loading: ${loading}`)
 
 //data.transcations = an array of transactions
 // data.card = object with card info
     //Create the table section
-    const {transactions, card} = data
+   
+        const {transactions, card} = data
+
 
     let table = document.createElement("table")
     table.classList.add("ttable")
@@ -117,6 +122,8 @@ const generateTransactionsTable = (data) => {
     
     tableHeaderRow.appendChild(col3Header)
 
+    console.log(transactions)
+
     //Create the body
 
     tableBody = document.createElement("tbody")
@@ -126,6 +133,7 @@ const generateTransactionsTable = (data) => {
     //Map through and create all rows
 
         transactions.map(item => {
+            console.log("Map.....")
 
 
         let tableRow = document.createElement("tr")
@@ -135,25 +143,47 @@ const generateTransactionsTable = (data) => {
 
         let col1 = document.createElement("td")
         col1.classList.add("ttableCol1")
-        col1.innerHTML = item.description
+
+        let ttalbeTransactionDescription = document.createElement("div")
+        ttalbeTransactionDescription.classList.add("ttalbeTransactionDescription")
+
+
+        if(!loading){
+            ttalbeTransactionDescription.innerHTML = item.description
+        } else if(loading){
+            ttalbeTransactionDescription.classList.add("skeleton")
+            ttalbeTransactionDescription.innerHTML = "&nbsp;"
+        }
+
+        col1.appendChild(ttalbeTransactionDescription)
+        
 
         let cardInfo = document.createElement("div")
         cardInfo.classList.add("ttableCardInfo")
         let cardName = document.createElement("div")
         cardName.classList.add("ttableCardNameText")
-        cardName.innerHTML = card.name
-        cardInfo.appendChild(cardName)
         let masking = document.createElement("div")
         masking.classList.add("genericSmallMaskingForCC")
-        masking.innerHTML = "•••••"
-        cardInfo.appendChild(masking)
+
 
         let lastFourDigitsOfCardNumber = document.createElement("div")
         lastFourDigitsOfCardNumber.classList.add("lastFourDigitsOfCardNumber")
-        lastFourDigitsOfCardNumber.innerHTML = getLastFourAlphaNumericCharacters(card.number)
+
+
+        if(!loading){
+            cardName.innerHTML = card.name
+            masking.innerHTML = "•••••"
+            lastFourDigitsOfCardNumber.innerHTML = getLastFourAlphaNumericCharacters(card.number)
+
+        } else if (loading){
+            cardInfo.classList.add("skeleton")
+           
+        }
+
+        cardInfo.appendChild(cardName)
+
+        cardInfo.appendChild(masking)
         cardInfo.appendChild(lastFourDigitsOfCardNumber)
-
-
 
         col1.appendChild(cardInfo)
 
@@ -165,8 +195,23 @@ const generateTransactionsTable = (data) => {
 
         let col2 = document.createElement("td")
         col2.classList.add("ttableCol2")
-        col2.innerHTML = formatDateToDayMonthYear(item.date)
-        tableRow.appendChild(col2)
+
+        let ttableDateDiv = document.createElement("div")
+        ttableDateDiv.classList.add("ttableDateDiv")
+
+        col2.appendChild(ttableDateDiv)
+        
+
+        if(!loading){
+            ttableDateDiv.innerHTML = formatDateToDayMonthYear(item.date)
+        } else if (loading){
+            ttableDateDiv.classList.add("skeleton")
+            ttableDateDiv.innerHTML = "&nbsp;"
+
+
+        }
+              tableRow.appendChild(col2)
+
 
 
         let col3 = document.createElement("td")
@@ -175,20 +220,30 @@ const generateTransactionsTable = (data) => {
 
         let amountDiv = document.createElement("div")
         amountDiv.classList.add("ttableAmountDiv")
+        
 
         //Append a + in front of non-negative numbers
 
-        let amount = item.amount.toString()
 
-        if(Array.from(amount)[0] !== '-'){
-           amount = "+" + amount
+        if(!loading){
+            let amount = item.amount.toString()
+
+            if(Array.from(amount)[0] !== '-'){
+               amount = "+" + amount
+            }
+            amountDiv.innerHTML = amount + " " + "€"        
+         } else if (loading){
+
+            amountDiv.innerHTML = "&nbsp;"
+
+            amountDiv.classList.add("skeleton")
+
         }
-        amountDiv.innerHTML = amount + " " + "€"
         col3.appendChild(amountDiv)    
 
         //append to table
 
-        tableBody.appendChild(tableRow)
+        tableBody.appendChild(tableRow) 
 
 
     })
@@ -257,11 +312,20 @@ function getLastFourAlphaNumericCharacters(cardNumber) {
 
 
 
-const buildActiveCardItem = (item) => {
-  const dataElement = document.createElement("div");
-  dataElement.id = item.id;
+const buildActiveCardItem = (item, loading) => {
+  const dataElement = document.createElement("div");  
   dataElement.classList.add("creditCard");
   dataElement.classList.add("active");
+
+  if(loading){
+    dataElement.classList.add("skeleton")
+  }
+
+
+  if(!loading){
+    console.log("TEST....")
+    dataElement.classList.add("loaded")
+    dataElement.id = item.id
   const topElement = document.createElement("div");
   topElement.classList.add("top");
   dataElement.appendChild(topElement);
@@ -345,15 +409,24 @@ const buildActiveCardItem = (item) => {
   cardType.classList.add("mediumCardText");
   cardType.innerHTML = "CREDIT";
   cardTypeElement.appendChild(cardType);
-
+}
   return dataElement;
 };
 
-const buildInactiveCardItem = (item) => {
+const buildInactiveCardItem = (item, loading) => {
   const dataElement = document.createElement("div");
-  dataElement.id = item.id;
   dataElement.classList.add("creditCard");
   dataElement.classList.add("inactive");
+
+  if(loading) {
+    dataElement.classList.add("skeleton");
+
+  }
+
+  if(!loading){
+
+    dataElement.id = item.id;
+
 
   //leftSectionInactive
   const leftSectionInactive = document.createElement("div");
@@ -415,17 +488,57 @@ const buildInactiveCardItem = (item) => {
   inactiveCreditOrDebit.classList.add("inactiveCardTypeText");
   inactiveCreditOrDebit.innerHTML = "CREDIT";
   rightSectionInactive.appendChild(inactiveCreditOrDebit);
-
+}
   return dataElement;
 };
 
 const initPage = async () => {
   console.log("Init...");
+
+  //Load skeleton active card
+
+  let creditCardContainer = document.getElementById("creditCardContainer");
+
+  let loading = true
+
+  //Show 1x active card skeleton
+  creditCardContainer.appendChild(buildActiveCardItem(null, loading))
+
+  //Show 5x inactive card skeletons
+  creditCardContainer.appendChild(buildInactiveCardItem(null, loading));
+  creditCardContainer.appendChild(buildInactiveCardItem(null, loading));
+  creditCardContainer.appendChild(buildInactiveCardItem(null, loading));
+  creditCardContainer.appendChild(buildInactiveCardItem(null, loading));
+  creditCardContainer.appendChild(buildInactiveCardItem(null, loading));
+  
+
+  //Build table skeleton
+
+  let tableLoading = true
+
+  let dummyTransactionTableData = {
+    transactions: [1,2,3,4,5,6,7,8,9,10],
+    card: null
+  }
+  let transactionsTableSkeleton = generateTransactionsTable(dummyTransactionTableData, tableLoading)
+
+  let tableContainer = document.getElementById("tableParentContainer");
+
+  tableContainer.appendChild(transactionsTableSkeleton)
+
+
+
   cards = await fetchCards();
   console.log(cards);
 
 
-  let creditCardContainer = document.getElementById("creditCardContainer");
+  let transactions = await fetchTransactionsByCardId(cards[0].id)
+
+    //Remove all skeleton nodes
+    creditCardContainer.querySelectorAll('*').forEach(n => n.remove());
+
+  //Add cards to document
+  //Do this after transactions are also brought back so we can load it all together
 
   cards.forEach((item, index) => {
     if (index === 0) {
@@ -433,9 +546,7 @@ const initPage = async () => {
     } else {
       creditCardContainer.appendChild(buildInactiveCardItem(cards[index]));
     }
-  });
-
-  let transactions = await fetchTransactionsByCardId(cards[0].id)
+  }); 
 
   console.log(transactions)
 
@@ -444,12 +555,18 @@ const initPage = async () => {
     card: cards[0]
   }
 
+  //clear transactionContainer
+
+  
+  tableContainer.querySelectorAll('*').forEach(n => n.remove());
+
+
+
   let transactionsTable = generateTransactionsTable(transactionsWithCard)
 
-  let tableContainer = document.getElementById("tableParentContainer");
 
-  tableContainer.appendChild(transactionsTable)
-
+  tableContainer.appendChild(transactionsTable) 
+ 
 
   
 };
