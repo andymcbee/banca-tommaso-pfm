@@ -1,0 +1,251 @@
+    /*   border: 1px solid;
+    box-sizing: border-box;
+    color: black; */
+
+.ttable {
+    width: 100%;
+    border-collapse: collapse;
+
+  }
+  
+ 
+
+  .ttableRow .ttableCol1 {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .ttable thead th {
+    text-align: left;
+    padding: 20px;
+    border-bottom: 1px solid;
+    box-sizing: border-box;
+    color: #ced2d6
+  }
+  
+  .ttable tbody td {
+    padding: 20px;
+  }
+  
+  .ttable tr {
+    border-bottom: 1px solid;
+    box-sizing: border-box;
+    border-color: rgb(21, 201, 233);
+  }
+
+  .ttableAmountDiv {
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  
+  .ttableCol3 {
+    text-align: right;
+  }
+
+  .ttableCardInfo {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    border-radius: 5px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 6px;
+    padding-right: 6px;
+    color: #6F767E;
+    font-size: 12px;
+    align-self: flex-start;
+    background-color: #E9EAEB;
+  }
+
+
+  .genericSmallMaskingForCC {
+    font-size: 8px;
+  }
+
+
+
+  body {
+    background-color: rgb(221, 206, 206);
+  }
+  
+  /* div {
+    border: 1px solid;
+    box-sizing: border-box;
+    color: black;
+  } */
+  
+  .wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+  .container {
+    display: flex;
+    gap: 25px;
+    padding-top: 40px;
+    padding-left: 30px;
+    padding-right: 30px;
+    background-color: #ffffff;
+    width: 80%;
+    flex-direction: column;
+    border-top-left-radius: 50px;
+  }
+  
+  .contentColumns {
+    display: flex;
+    gap: 50px;
+    justify-content: space-between;
+  }
+  
+  .left {
+    display: flex;
+    width: 450px;
+    flex-direction: column;
+    gap: 15px;
+align-items: center;
+  }
+  
+  .right {
+    width: 100%;
+  }
+  
+  /* Credit Card */
+  
+  .creditCard {
+    display: flex;
+    border-radius: 10px;
+    box-sizing: border-box;
+    padding: 15px;
+  }
+  
+  .creditCard.active {
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+    background: linear-gradient(to right, #0c4b9dd0, #0c4b9da2);
+    height: 175px;
+    color: white;
+  }
+  
+  .bottom {
+    display: none;
+
+  }
+  
+  .cardLogo {
+    height: 35px;
+    width: 35x;
+    background-color: white;
+    border-radius: 8px;
+  }
+  
+  .top {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .nameLogoContainer {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+  }
+    
+  .active .bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+   
+  }
+  
+  .col {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 2px;
+  }
+  
+  .smallCardText {
+    font-size: 11px;
+    color: rgb(196, 196, 196);
+  }
+  
+  .mediumCardText {
+    font-size: 12px;
+  }
+
+  .activeCardLogo {
+    width: 50px;
+    margin-bottom: 4px;
+  }
+  
+  /* inactive card design */
+  
+  .creditCard.inactive {
+    background-color: #f4f4f5;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 95%;
+    font-size:12px;
+  }
+  
+  .rightSectionInactive {
+    border-left: 1px solid;
+    border-color: rgb(196, 196, 196);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-left: 20px;
+  }
+  
+  .leftSectionInactive {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    align-items: center;
+  }
+  
+  .inactiveNameStatusSection {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .pill {
+    border-radius: 25px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 6px;
+    padding-right: 6px;
+    color: white;
+    font-size: 10px;
+    align-self: flex-start
+  }
+  
+  .pillRed {
+    background-color: #e65454;
+  }
+  
+  .logoInactiveCard {
+    height: 30px;
+    width: 30x;
+    background-color: white;
+    border-radius: 5px;
+  }
+  
+
+  .unselectedCardNumber {
+    color: #676d72;
+  }
+
+  .inactiveCardLogo {
+    width: 50px;
+  }
+
+.inactiveCardTypeText {
+    padding-top: 5px;
+    color: #676d72;
+}
