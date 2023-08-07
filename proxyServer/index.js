@@ -23,12 +23,12 @@ app.get("/cards", async (req, res) => {
   res.send(data);
 });
 
-app.get("/transactions/:id", async (req, res) => {
-  const { id } = req.params;
+app.get("/transactions/:id/:lastTransactionDate", async (req, res) => {
+  const { id, lastTransactionDate } = req.params;
 
-  const url = `https://tommaso-bank.netlify.app/.netlify/functions/cards/transactions/${id}`;
-
-  console.log(id);
+  const url = `https://tommaso-bank.netlify.app/.netlify/functions/cards/transactions/${id}?lastTransactionDate=${lastTransactionDate}
+	
+  `;
 
   let data = await fetch(url).then((response) => {
     return response.text();
