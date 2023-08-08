@@ -1,3 +1,10 @@
+//global data
+
+
+let globalData = {
+  cards: []
+}
+
 //Functions
 
 //store the cardId on the transaction table for easy access
@@ -281,9 +288,8 @@ const generateTransactionsTable = (data, loading) => {
 
     col2.appendChild(ttableDateDiv);
 
-    //formatDateToDayMonthYear(item.date)
     if (!loading) {
-      ttableDateDiv.innerHTML = item.date;
+      ttableDateDiv.innerHTML = formatDateToDayMonthYear(item.date)
     } else if (loading) {
       ttableDateDiv.classList.add("skeleton");
       ttableDateDiv.innerHTML = "&nbsp;";
@@ -366,10 +372,125 @@ function getLastFourAlphaNumericCharacters(cardNumber) {
   return lastFourChars;
 }
 
+/* const saveCreditCardDataOnElementAsDataAttribute = (data, divId) => {
+
+  const creditCard = document.getElementById(divId)
+
+  //save card number
+
+  //save bank name
+
+  //
+} */
+
+const changeActiveCard = async (event) => {
+
+
+  let creditCardContainer = document.getElementById("creditCardContainer")
+
+  console.log(creditCardContainer)
+
+
+  //Replace current active node with inactive card
+
+  const currentActiveCard = document.getElementById(getCurrentCardId())
+
+  console.log(currentActiveCard)
+
+  const newInactiveCardData = globalData.cards.find( (item) => item.id === getCurrentCardId())
+
+  console.log(newInactiveCardData)
+
+  const newInactiveCard = buildInactiveCardItem(newInactiveCardData)
+
+  console.log(newInactiveCard)
+
+  creditCardContainer.replaceChild(newInactiveCard, currentActiveCard)
+
+
+  const clickedCardId = event.target.id
+  //Get new active node
+
+  const clickedCard = document.getElementById(clickedCardId)
+
+  console.log(clickedCard)
+
+
+  const newActiveCardData = globalData.cards.find( (item) => item.id ===  clickedCardId)
+
+  console.log(newActiveCardData)
+
+  const newActiveCard = buildActiveCardItem(newActiveCardData)
+
+  console.log(newActiveCard)
+
+  //replace clicked inactive card with active card
+
+  creditCardContainer.replaceChild(newActiveCard, clickedCard)
+
+  //UPDATE THE CURRENT CARD ID!
+
+  setCurrentCardId(clickedCardId)
+
+
+  //Append new active to top of list
+
+  creditCardContainer.prepend(newActiveCard)
+
+  newActiveCard.classList.add("newTopCard")
+
+
+  //Set transaction table to new card
+
+ // ttableRow
+  //Remove skeleton rows from transaction table
+  document.querySelectorAll(".ttableRow").forEach((n) => n.remove());
+
+  //add skeleton rows
+
+    buildSkeletonRows();
+
+  //Call real data
+
+
+ 
+
+ let transactions = await fetchTransactionsByCardId(getCurrentCardId());
+
+ sortByTransactionsDate(transactions);
+
+ window.lastUpdateDate = transactions[transactions.length - 1].date;
+
+ setLastTransactionDate(transactions[transactions.length - 1].date);
+
+
+  //Remove skeleton rows from transaction table
+  document.querySelectorAll("#skeletonRow").forEach((n) => n.remove());
+
+
+  //Transaction with Card object
+
+  let transactionsWithCard = {
+    transactions,
+    card: newActiveCardData,
+  };
+
+
+  //Add real transactions onto table
+  generateTransactionsTable(transactionsWithCard);
+
+
+
+
+
+ 
+}
+
 const buildActiveCardItem = (item, loading) => {
   const dataElement = document.createElement("div");
   dataElement.classList.add("creditCard");
   dataElement.classList.add("active");
+  dataElement.addEventListener("click", changeActiveCard)
 
   if (loading) {
     dataElement.classList.add("skeleton");
@@ -422,7 +543,7 @@ const buildActiveCardItem = (item, loading) => {
     //second nested item
     const cardNumberElement = document.createElement("div");
     cardNumberElement.classList.add("mediumCardText");
-    cardNumberElement.innerHTML = item.number;
+    cardNumberElement.innerHTML = hideCardNumber(item.number);
     cardNumber.appendChild(cardNumberElement);
     //next
     //Create cardExpiry div and nest into bottom element
@@ -473,6 +594,7 @@ const buildInactiveCardItem = (item, loading) => {
   const dataElement = document.createElement("div");
   dataElement.classList.add("creditCard");
   dataElement.classList.add("inactive");
+  dataElement.addEventListener("click", changeActiveCard)
 
   if (loading) {
     dataElement.classList.add("skeleton");
@@ -570,7 +692,16 @@ const initPage = async () => {
   buildSkeletonRows();
 
   const cards = await fetchCards();
-  console.log(cards);
+
+  console.log(cards)
+
+  //add cards to global data state
+
+  cards.map((item) => {
+    console.log(item)
+    globalData.cards.push(item)
+  })
+  
 
   //store first card ID as current card id.
   setCurrentCardId(cards[0].id);
